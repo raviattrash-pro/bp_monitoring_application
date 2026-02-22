@@ -1,13 +1,12 @@
 # Build stage
-FROM maven:3.8.4-openjdk-17-slim AS build
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
-COPY backend/pom.xml backend/
-COPY backend/src backend/src
-RUN mvn -f backend/pom.xml clean package -DskipTests
-
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 # Run stage
-FROM openjdk:17-jdk-slim
+FROM openjdk:17.0.1-jdk-slim
 WORKDIR /app
-COPY --from=build /app/backend/target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
