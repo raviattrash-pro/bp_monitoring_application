@@ -46,15 +46,32 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+
+        // Allowed Origins
         String frontendUrl = System.getenv("FRONTEND_URL");
         if (frontendUrl != null && !frontendUrl.isEmpty()) {
-            config.setAllowedOrigins(List.of(frontendUrl, "http://localhost:5173", "http://localhost:3000"));
+            // Remove trailing slash if present
+            if (frontendUrl.endsWith("/")) {
+                frontendUrl = frontendUrl.substring(0, frontendUrl.length() - 1);
+            }
+            config.setAllowedOrigins(List.of(
+                    frontendUrl,
+                    "http://localhost:5173",
+                    "http://localhost:3000",
+                    "https://bp-dashboard-pi.vercel.app" // Add explicit backup
+            ));
         } else {
-            config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));
+            config.setAllowedOrigins(List.of(
+                    "http://localhost:5173",
+                    "http://localhost:3000",
+                    "https://bp-dashboard-pi.vercel.app"));
         }
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With", "Origin"));
         config.setAllowCredentials(true);
+        config.setMaxAge(3600L); // Cache preflight for 1 hour
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
