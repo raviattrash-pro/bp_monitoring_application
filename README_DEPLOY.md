@@ -75,6 +75,9 @@ To receive reminders on a new phone:
 
 ## 🛠️ Troubleshooting & Tips
 
+- **Dockerfile Not Found**: 
+  - Ensure the **Root Directory** setting in your Render service is either **empty** or set to `backend`.
+  - If you set it to `backend`, Render will use `backend/Dockerfile`. If you leave it empty, it will use the root `Dockerfile`. Both are now included in your repository for safety.
 - **Cold Starts**: Render's free tier "sleeps" after 15 mins of inactivity. The first request after a break will take ~1-2 minutes to start.
 - **SSL Errors**: Ensure your `DB_URL` includes the SSL parameters (`sslMode=VERIFY_IDENTITY` for TiDB or `sslmode=require` for Neon).
 - **Check Logs**:
