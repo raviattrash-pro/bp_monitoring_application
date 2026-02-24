@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import AdminDashboardPage from './pages/AdminDashboardPage';
 import ForcePasswordChangePage from './pages/ForcePasswordChangePage';
+import BpCalculatorPage from './pages/BpCalculatorPage';
 
 function App() {
     return (
@@ -35,6 +36,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <ForcePasswordChangePage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/calculator"
+                        element={
+                            <ProtectedRoute>
+                                <BpCalculatorPage />
                             </ProtectedRoute>
                         }
                     />

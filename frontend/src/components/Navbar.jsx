@@ -1,6 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LogOut, Shield } from 'lucide-react';
+import { LogOut, Shield, Calculator } from 'lucide-react';
 import InstallButton from './InstallButton';
 
 export default function Navbar() {
@@ -14,6 +14,7 @@ export default function Navbar() {
     };
 
     const isOnAdmin = location.pathname === '/admin';
+    const isOnCalc = location.pathname === '/calculator';
 
     return (
         <nav className="navbar">
@@ -26,6 +27,14 @@ export default function Navbar() {
                     <span className="navbar-greeting">
                         Hello, <strong>{user?.name}</strong>
                     </span>
+                    <button
+                        className={`btn ${isOnCalc ? 'btn-secondary' : 'btn-calc'}`}
+                        onClick={() => navigate(isOnCalc ? '/dashboard' : '/calculator')}
+                        style={{ padding: '8px 16px', fontSize: '0.82rem' }}
+                    >
+                        <Calculator size={14} />
+                        {isOnCalc ? 'Dashboard' : 'BP Calculator'}
+                    </button>
                     {isAdmin() && (
                         <button
                             className={`btn ${isOnAdmin ? 'btn-secondary' : 'btn-admin'}`}

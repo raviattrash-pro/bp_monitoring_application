@@ -8,8 +8,8 @@ This guide provides step-by-step instructions to deploy your application for **f
 
 1.  **Sign Up**: Go to [TiDB Cloud](https://tidbcloud.com/) and create a free **Serverless** cluster.
 2.  **Get Credentials**: Click **"Connect"**. Note down your **Host**, **Port (4000)**, **User**, and **Password**.
-3.  **JDBC URL Pattern**: Your `DB_URL` will look like this:
-    `jdbc:mysql://{HOST}:4000/test?user={USER}&password={PASSWORD}&sslMode=VERIFY_IDENTITY`
+3.  **JDBC URL Pattern**: Your `DB_URL` should look like this (remove any curly braces):
+    `jdbc:mysql://YOUR_HOST:4000/test?user=YOUR_USER&password=YOUR_PASSWORD&sslMode=VERIFY_IDENTITY`
 
 ---
 
