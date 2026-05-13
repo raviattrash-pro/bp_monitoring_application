@@ -39,6 +39,13 @@ public class BpService {
                 BpReading reading = BpReading.builder()
                                 .systolic(request.getSystolic())
                                 .diastolic(request.getDiastolic())
+                                .heartRate(request.getHeartRate())
+                                .bloodSugar(request.getBloodSugar())
+                                .oxygenSaturation(request.getOxygenSaturation())
+                                .bodyTemperature(request.getBodyTemperature())
+                                .weightKg(request.getWeightKg())
+                                .notes(normalizeText(request.getNotes()))
+                                .symptoms(normalizeText(request.getSymptoms()))
                                 .timeOfDay(BpReading.TimeOfDay.valueOf(request.getTimeOfDay().toUpperCase()))
                                 .readingDate(LocalDate.parse(request.getReadingDate()))
                                 .user(user)
@@ -67,13 +74,20 @@ public class BpService {
                                 .findByUserIdOrderByReadingDateAscTimeOfDayAsc(user.getId());
 
                 StringBuilder csv = new StringBuilder();
-                csv.append("Date,Time,Systolic,Diastolic\n");
+                csv.append("Date,Time,Systolic,Diastolic,HeartRate,BloodSugar,OxygenSaturation,BodyTemperature,WeightKg,Notes,Symptoms\n");
 
                 for (BpReading r : readings) {
                         csv.append(r.getReadingDate()).append(",")
                                         .append(r.getTimeOfDay().name()).append(",")
                                         .append(r.getSystolic()).append(",")
-                                        .append(r.getDiastolic()).append("\n");
+                                        .append(r.getDiastolic()).append(",")
+                                        .append(safeCsvValue(r.getHeartRate())).append(",")
+                                        .append(safeCsvValue(r.getBloodSugar())).append(",")
+                                        .append(safeCsvValue(r.getOxygenSaturation())).append(",")
+                                        .append(safeCsvValue(r.getBodyTemperature())).append(",")
+                                        .append(safeCsvValue(r.getWeightKg())).append(",")
+                                        .append(escapeCsv(r.getNotes())).append(",")
+                                        .append(escapeCsv(r.getSymptoms())).append("\n");
                 }
 
                 return csv.toString().getBytes(StandardCharsets.UTF_8);
@@ -99,7 +113,7 @@ public class BpService {
                                                 continue;
                                 }
 
-                                String[] parts = line.split(",");
+                                String[] parts = parseCsvLine(line);
                                 if (parts.length < 4)
                                         continue;
 
@@ -110,6 +124,13 @@ public class BpService {
                                                                         .valueOf(parts[1].trim().toUpperCase()))
                                                         .systolic(Integer.parseInt(parts[2].trim()))
                                                         .diastolic(Integer.parseInt(parts[3].trim()))
+                                                        .heartRate(parseInteger(parts, 4))
+                                                        .bloodSugar(parseInteger(parts, 5))
+                                                        .oxygenSaturation(parseInteger(parts, 6))
+                                                        .bodyTemperature(parseDouble(parts, 7))
+                                                        .weightKg(parseDouble(parts, 8))
+                                                        .notes(parseString(parts, 9))
+                                                        .symptoms(parseString(parts, 10))
                                                         .user(user)
                                                         .build();
                                         toSave.add(reading);
@@ -140,6 +161,13 @@ public class BpService {
 
                 reading.setSystolic(request.getSystolic());
                 reading.setDiastolic(request.getDiastolic());
+                reading.setHeartRate(request.getHeartRate());
+                reading.setBloodSugar(request.getBloodSugar());
+                reading.setOxygenSaturation(request.getOxygenSaturation());
+                reading.setBodyTemperature(request.getBodyTemperature());
+                reading.setWeightKg(request.getWeightKg());
+                reading.setNotes(normalizeText(request.getNotes()));
+                reading.setSymptoms(normalizeText(request.getSymptoms()));
                 reading.setTimeOfDay(BpReading.TimeOfDay.valueOf(request.getTimeOfDay().toUpperCase()));
                 reading.setReadingDate(LocalDate.parse(request.getReadingDate()));
 
@@ -166,8 +194,82 @@ public class BpService {
                                 .id(reading.getId())
                                 .systolic(reading.getSystolic())
                                 .diastolic(reading.getDiastolic())
+                                .heartRate(reading.getHeartRate())
+                                .bloodSugar(reading.getBloodSugar())
+                                .oxygenSaturation(reading.getOxygenSaturation())
+                                .bodyTemperature(reading.getBodyTemperature())
+                                .weightKg(reading.getWeightKg())
+                                .notes(reading.getNotes())
+                                .symptoms(reading.getSymptoms())
                                 .timeOfDay(reading.getTimeOfDay().name())
                                 .readingDate(reading.getReadingDate().toString())
                                 .build();
+        }
+
+        private Integer parseInteger(String[] parts, int index) {
+                if (parts.length <= index || parts[index].trim().isEmpty()) {
+                        return null;
+                }
+                return Integer.parseInt(parts[index].trim());
+        }
+
+        private Double parseDouble(String[] parts, int index) {
+                if (parts.length <= index || parts[index].trim().isEmpty()) {
+                        return null;
+                }
+                return Double.parseDouble(parts[index].trim());
+        }
+
+        private String parseString(String[] parts, int index) {
+                if (parts.length <= index) {
+                        return null;
+                }
+                return normalizeText(parts[index].replace("\"", "").trim());
+        }
+
+        private String normalizeText(String value) {
+                if (value == null) {
+                        return null;
+                }
+                String trimmed = value.trim();
+                return trimmed.isEmpty() ? null : trimmed;
+        }
+
+        private String safeCsvValue(Object value) {
+                return value == null ? "" : value.toString();
+        }
+
+        private String escapeCsv(String value) {
+                if (value == null) {
+                        return "";
+                }
+                return "\"" + value.replace("\"", "\"\"") + "\"";
+        }
+
+        private String[] parseCsvLine(String line) {
+                List<String> values = new ArrayList<>();
+                StringBuilder current = new StringBuilder();
+                boolean inQuotes = false;
+
+                for (int i = 0; i < line.length(); i++) {
+                        char ch = line.charAt(i);
+
+                        if (ch == '"') {
+                                if (inQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"') {
+                                        current.append('"');
+                                        i++;
+                                } else {
+                                        inQuotes = !inQuotes;
+                                }
+                        } else if (ch == ',' && !inQuotes) {
+                                values.add(current.toString());
+                                current.setLength(0);
+                        } else {
+                                current.append(ch);
+                        }
+                }
+
+                values.add(current.toString());
+                return values.toArray(new String[0]);
         }
 }

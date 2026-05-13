@@ -3,7 +3,6 @@ import axios from 'axios';
 const getBaseURL = () => {
     const envUrl = import.meta.env.VITE_API_URL;
     if (!envUrl) return '/api';
-    // Ensure no trailing slash on envUrl and append /api
     return envUrl.endsWith('/') ? `${envUrl}api` : `${envUrl}/api`;
 };
 
@@ -14,7 +13,14 @@ const api = axios.create({
     },
 });
 
-// JWT interceptor — attach token to every request
+const clearAuthAndRedirect = () => {
+    localStorage.removeItem('bp_token');
+    localStorage.removeItem('bp_user');
+    if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+    }
+};
+
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('bp_token');
     if (token) {
@@ -23,15 +29,18 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Response interceptor — handle 401 (token expired)
 api.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('bp_token');
-            localStorage.removeItem('bp_user');
-            window.location.href = '/login';
+        const status = error.response?.status;
+        const token = localStorage.getItem('bp_token');
+        const requestUrl = error.config?.url || '';
+        const isAuthRequest = requestUrl.includes('/auth/');
+
+        if (status === 401 && token && !isAuthRequest) {
+            clearAuthAndRedirect();
         }
+
         return Promise.reject(error);
     }
 );

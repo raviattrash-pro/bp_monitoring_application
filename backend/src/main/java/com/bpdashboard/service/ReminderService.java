@@ -23,13 +23,13 @@ public class ReminderService {
     private static final Logger logger = Logger.getLogger(ReminderService.class.getName());
     private final ReminderRepository reminderRepository;
 
-    @Value("${twilio.account.sid}")
+    @Value("${twilio.account.sid:LOCAL_TWILIO_SID}")
     private String accountSid;
 
-    @Value("${twilio.auth.token}")
+    @Value("${twilio.auth.token:LOCAL_TWILIO_TOKEN}")
     private String authToken;
 
-    @Value("${twilio.whatsapp.number}")
+    @Value("${twilio.whatsapp.number:+14155238886}")
     private String twilioNumber;
 
     @Value("${FRONTEND_URL:http://localhost:5173}")

@@ -15,7 +15,7 @@ public class JwtUtil {
     private final SecretKey key;
     private final long expiration;
 
-    public JwtUtil(@Value("${jwt.secret}") String secret,
+    public JwtUtil(@Value("${jwt.secret:bp-dashboard-local-dev-secret-key-2026-keep-safe}") String secret,
             @Value("${jwt.expiration}") long expiration) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         this.expiration = expiration;

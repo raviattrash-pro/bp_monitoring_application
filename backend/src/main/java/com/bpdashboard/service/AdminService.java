@@ -126,6 +126,12 @@ public class AdminService {
                 .id(reading.getId())
                 .systolic(reading.getSystolic())
                 .diastolic(reading.getDiastolic())
+                .heartRate(reading.getHeartRate())
+                .bloodSugar(reading.getBloodSugar())
+                .oxygenSaturation(reading.getOxygenSaturation())
+                .bodyTemperature(reading.getBodyTemperature())
+                .weightKg(reading.getWeightKg())
+                .notes(reading.getNotes())
                 .timeOfDay(reading.getTimeOfDay().name())
                 .readingDate(reading.getReadingDate().toString())
                 .build();

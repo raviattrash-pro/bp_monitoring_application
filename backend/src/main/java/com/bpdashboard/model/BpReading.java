@@ -16,6 +16,27 @@ public class BpReading {
     @Column(nullable = false)
     private Integer diastolic;
 
+    @Column(name = "heart_rate")
+    private Integer heartRate;
+
+    @Column(name = "blood_sugar")
+    private Integer bloodSugar;
+
+    @Column(name = "oxygen_saturation")
+    private Integer oxygenSaturation;
+
+    @Column(name = "body_temperature")
+    private Double bodyTemperature;
+
+    @Column(name = "weight_kg")
+    private Double weightKg;
+
+    @Column(length = 1000)
+    private String notes;
+
+    @Column(length = 1000)
+    private String symptoms;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "time_of_day", nullable = false)
     private TimeOfDay timeOfDay;
@@ -34,11 +55,19 @@ public class BpReading {
     public BpReading() {
     }
 
-    public BpReading(Long id, Integer systolic, Integer diastolic, TimeOfDay timeOfDay, LocalDate readingDate,
-            User user) {
+    public BpReading(Long id, Integer systolic, Integer diastolic, Integer heartRate, Integer bloodSugar,
+            Integer oxygenSaturation, Double bodyTemperature, Double weightKg, String notes, String symptoms, TimeOfDay timeOfDay,
+            LocalDate readingDate, User user) {
         this.id = id;
         this.systolic = systolic;
         this.diastolic = diastolic;
+        this.heartRate = heartRate;
+        this.bloodSugar = bloodSugar;
+        this.oxygenSaturation = oxygenSaturation;
+        this.bodyTemperature = bodyTemperature;
+        this.weightKg = weightKg;
+        this.notes = notes;
+        this.symptoms = symptoms;
         this.timeOfDay = timeOfDay;
         this.readingDate = readingDate;
         this.user = user;
@@ -67,6 +96,62 @@ public class BpReading {
 
     public void setDiastolic(Integer diastolic) {
         this.diastolic = diastolic;
+    }
+
+    public Integer getHeartRate() {
+        return heartRate;
+    }
+
+    public void setHeartRate(Integer heartRate) {
+        this.heartRate = heartRate;
+    }
+
+    public Integer getBloodSugar() {
+        return bloodSugar;
+    }
+
+    public void setBloodSugar(Integer bloodSugar) {
+        this.bloodSugar = bloodSugar;
+    }
+
+    public Integer getOxygenSaturation() {
+        return oxygenSaturation;
+    }
+
+    public void setOxygenSaturation(Integer oxygenSaturation) {
+        this.oxygenSaturation = oxygenSaturation;
+    }
+
+    public Double getBodyTemperature() {
+        return bodyTemperature;
+    }
+
+    public void setBodyTemperature(Double bodyTemperature) {
+        this.bodyTemperature = bodyTemperature;
+    }
+
+    public Double getWeightKg() {
+        return weightKg;
+    }
+
+    public void setWeightKg(Double weightKg) {
+        this.weightKg = weightKg;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public String getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(String symptoms) {
+        this.symptoms = symptoms;
     }
 
     public TimeOfDay getTimeOfDay() {
@@ -102,6 +187,13 @@ public class BpReading {
         private Long id;
         private Integer systolic;
         private Integer diastolic;
+        private Integer heartRate;
+        private Integer bloodSugar;
+        private Integer oxygenSaturation;
+        private Double bodyTemperature;
+        private Double weightKg;
+        private String notes;
+        private String symptoms;
         private TimeOfDay timeOfDay;
         private LocalDate readingDate;
         private User user;
@@ -121,6 +213,41 @@ public class BpReading {
             return this;
         }
 
+        public BpReadingBuilder heartRate(Integer heartRate) {
+            this.heartRate = heartRate;
+            return this;
+        }
+
+        public BpReadingBuilder bloodSugar(Integer bloodSugar) {
+            this.bloodSugar = bloodSugar;
+            return this;
+        }
+
+        public BpReadingBuilder oxygenSaturation(Integer oxygenSaturation) {
+            this.oxygenSaturation = oxygenSaturation;
+            return this;
+        }
+
+        public BpReadingBuilder bodyTemperature(Double bodyTemperature) {
+            this.bodyTemperature = bodyTemperature;
+            return this;
+        }
+
+        public BpReadingBuilder weightKg(Double weightKg) {
+            this.weightKg = weightKg;
+            return this;
+        }
+
+        public BpReadingBuilder notes(String notes) {
+            this.notes = notes;
+            return this;
+        }
+
+        public BpReadingBuilder symptoms(String symptoms) {
+            this.symptoms = symptoms;
+            return this;
+        }
+
         public BpReadingBuilder timeOfDay(TimeOfDay timeOfDay) {
             this.timeOfDay = timeOfDay;
             return this;
@@ -137,7 +264,8 @@ public class BpReading {
         }
 
         public BpReading build() {
-            return new BpReading(id, systolic, diastolic, timeOfDay, readingDate, user);
+            return new BpReading(id, systolic, diastolic, heartRate, bloodSugar, oxygenSaturation, bodyTemperature,
+                    weightKg, notes, symptoms, timeOfDay, readingDate, user);
         }
     }
 }

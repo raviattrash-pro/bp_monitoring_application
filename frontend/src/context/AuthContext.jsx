@@ -1,18 +1,32 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext(null);
 
+function getStoredUser() {
+    try {
+        const token = localStorage.getItem('bp_token');
+        const userData = localStorage.getItem('bp_user');
+        if (!token || !userData) return null;
+        return JSON.parse(userData);
+    } catch {
+        return null;
+    }
+}
+
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => getStoredUser());
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const token = localStorage.getItem('bp_token');
-        const userData = localStorage.getItem('bp_user');
-        if (token && userData) {
-            setUser(JSON.parse(userData));
-        }
+        setUser(getStoredUser());
         setLoading(false);
+
+        const handleStorage = () => {
+            setUser(getStoredUser());
+        };
+
+        window.addEventListener('storage', handleStorage);
+        return () => window.removeEventListener('storage', handleStorage);
     }, []);
 
     const login = (token, userData) => {
@@ -27,9 +41,7 @@ export function AuthProvider({ children }) {
         setUser(null);
     };
 
-    const isAdmin = () => {
-        return user?.role === 'ROLE_ADMIN';
-    };
+    const isAdmin = () => user?.role === 'ROLE_ADMIN';
 
     return (
         <AuthContext.Provider value={{ user, login, logout, loading, isAdmin }}>

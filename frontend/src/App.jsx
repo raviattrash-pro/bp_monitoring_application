@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
@@ -10,47 +11,49 @@ import BpCalculatorPage from './pages/BpCalculatorPage';
 
 function App() {
     return (
-        <AuthProvider>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/register" element={<RegisterPage />} />
-                    <Route
-                        path="/dashboard"
-                        element={
-                            <ProtectedRoute>
-                                <DashboardPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/admin"
-                        element={
-                            <ProtectedRoute>
-                                <AdminDashboardPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/force-password-change"
-                        element={
-                            <ProtectedRoute>
-                                <ForcePasswordChangePage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route
-                        path="/calculator"
-                        element={
-                            <ProtectedRoute>
-                                <BpCalculatorPage />
-                            </ProtectedRoute>
-                        }
-                    />
-                    <Route path="*" element={<Navigate to="/login" replace />} />
-                </Routes>
-            </BrowserRouter>
-        </AuthProvider>
+        <ThemeProvider>
+            <AuthProvider>
+                <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                    <Routes>
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                        <Route
+                            path="/dashboard"
+                            element={
+                                <ProtectedRoute>
+                                    <DashboardPage />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/admin"
+                            element={
+                                <ProtectedRoute>
+                                    <AdminDashboardPage />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/force-password-change"
+                            element={
+                                <ProtectedRoute>
+                                    <ForcePasswordChangePage />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route
+                            path="/calculator"
+                            element={
+                                <ProtectedRoute>
+                                    <BpCalculatorPage />
+                                </ProtectedRoute>
+                            }
+                        />
+                        <Route path="*" element={<Navigate to="/login" replace />} />
+                    </Routes>
+                </BrowserRouter>
+            </AuthProvider>
+        </ThemeProvider>
     );
 }
 
