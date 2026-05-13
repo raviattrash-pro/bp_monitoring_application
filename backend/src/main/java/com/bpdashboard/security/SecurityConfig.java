@@ -16,6 +16,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
@@ -48,30 +49,23 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // Allowed Origins
         String frontendUrl = System.getenv("FRONTEND_URL");
-        if (frontendUrl != null && !frontendUrl.isEmpty()) {
-            // Remove trailing slash if present
-            if (frontendUrl.endsWith("/")) {
-                frontendUrl = frontendUrl.substring(0, frontendUrl.length() - 1);
-            }
-            config.setAllowedOrigins(List.of(
-                    frontendUrl,
-                    "http://localhost:5173",
-                    "http://localhost:3000",
-                    "https://bp-dashboard-pi.vercel.app" // Add explicit backup
-            ));
-        } else {
-            config.setAllowedOrigins(List.of(
-                    "http://localhost:5173",
-                    "http://localhost:3000",
-                    "https://bp-dashboard-pi.vercel.app"));
+
+        List<String> allowedOriginPatterns = new ArrayList<>(List.of(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "https://*.vercel.app"
+        ));
+
+        if (frontendUrl != null && !frontendUrl.isBlank()) {
+            allowedOriginPatterns.add(frontendUrl.replaceAll("/+$", ""));
         }
 
+        config.setAllowedOriginPatterns(allowedOriginPatterns);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "X-Requested-With", "Origin"));
         config.setAllowCredentials(true);
-        config.setMaxAge(3600L); // Cache preflight for 1 hour
+        config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
